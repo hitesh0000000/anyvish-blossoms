@@ -8,7 +8,9 @@ The site is published with GitHub Pages after each push to `main`.
 
 ## Local preview
 
-Open `index.html` in a browser. Product photography, fonts, and Tailwind CSS are loaded from their configured external CDNs.
+Run `npm ci` and `npm run build`, then open `index.html` in a browser. Flower photography, logo artwork, and compiled styles are served locally; fonts and icons are loaded from Google Fonts.
+
+The transparent source logo is `assets/brand-logo.png`; `assets/brand-wordmark.png` and `assets/favicon.png` are its storefront-ready variations.
 
 ## Publish
 
