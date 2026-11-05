@@ -224,6 +224,39 @@
 </div>
 </div>
 </section>
+<section aria-labelledby="occasion-heading" class="bg-secondary-fixed/30 py-12 sm:py-16">
+<div class="mx-auto max-w-7xl px-6 lg:px-16">
+<div class="mb-7 flex flex-col gap-2 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
+<div>
+<p class="font-label-caps text-label-caps tracking-widest text-secondary uppercase">Har khushi ke liye</p>
+<h2 class="font-headline-lg text-headline-lg text-primary" id="occasion-heading">Choose a celebration</h2>
+</div>
+<p class="max-w-md text-sm leading-relaxed text-on-surface-variant">Birthday, shaadi ya tyohar—apne occasion ke liye handmade bouquet WhatsApp par poochhein.</p>
+</div>
+<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+<button class="group flex min-h-24 items-center gap-3 rounded-lg border border-outline-variant/50 bg-surface px-3 py-4 text-left transition hover:-translate-y-0.5 hover:border-secondary hover:shadow-md sm:px-4" onclick="orderForOccasion('Birthday / Janmadin')">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary">cake</span>
+<span><span class="block text-sm font-semibold text-primary">Birthday</span><span class="block text-xs text-outline">Janmadin</span></span>
+</button>
+<button class="group flex min-h-24 items-center gap-3 rounded-lg border border-outline-variant/50 bg-surface px-3 py-4 text-left transition hover:-translate-y-0.5 hover:border-secondary hover:shadow-md sm:px-4" onclick="orderForOccasion('Anniversary / Saalgirah')">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary">favorite</span>
+<span><span class="block text-sm font-semibold text-primary">Anniversary</span><span class="block text-xs text-outline">Saalgirah</span></span>
+</button>
+<button class="group flex min-h-24 items-center gap-3 rounded-lg border border-outline-variant/50 bg-surface px-3 py-4 text-left transition hover:-translate-y-0.5 hover:border-secondary hover:shadow-md sm:px-4" onclick="orderForOccasion('Wedding / Shaadi')">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary">celebration</span>
+<span><span class="block text-sm font-semibold text-primary">Wedding</span><span class="block text-xs text-outline">Shaadi</span></span>
+</button>
+<button class="group flex min-h-24 items-center gap-3 rounded-lg border border-outline-variant/50 bg-surface px-3 py-4 text-left transition hover:-translate-y-0.5 hover:border-secondary hover:shadow-md sm:px-4" onclick="orderForOccasion('Festival / Tyohar')">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary">flare</span>
+<span><span class="block text-sm font-semibold text-primary">Festivals</span><span class="block text-xs text-outline">Tyohar</span></span>
+</button>
+<button class="group col-span-2 flex min-h-20 items-center justify-center gap-3 rounded-lg border border-outline-variant/50 bg-surface px-3 py-3 text-left transition hover:-translate-y-0.5 hover:border-secondary hover:shadow-md sm:col-span-1 sm:min-h-24 sm:justify-start sm:px-4" onclick="orderForOccasion('Thank you / Shukriya')">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary">redeem</span>
+<span><span class="block text-sm font-semibold text-primary">Just because</span><span class="block text-xs text-outline">Shukriya &amp; surprises</span></span>
+</button>
+</div>
+</div>
+</section>
 <!-- 4. SIGNATURE SHOP & FILTERABLE CATALOG -->
 <section class="py-20 bg-surface-container-low" id="shop-blooms">
 <div class="max-w-7xl mx-auto px-6 lg:px-16">
@@ -1378,6 +1411,11 @@
 
       const encoded = encodeURIComponent(msg);
       window.open(`https://wa.me/919340863547?text=${encoded}`, '_blank');
+    }
+
+    function orderForOccasion(occasion) {
+      const message = `Namaste Anyvish Blossoms! Mujhe ${occasion} ke liye handcrafted flower bouquet dekhna hai. Kripya designs aur prices batayein.`;
+      window.open(`https://wa.me/919340863547?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
     }
 
     // Modal & Drawer Toggles
