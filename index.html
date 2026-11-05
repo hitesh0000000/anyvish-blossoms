@@ -1287,6 +1287,16 @@
       }
     }
 
+    function escapeCartText(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character]);
+    }
+
     function addToCart(name, price, variant) {
       const existing = cart.find(item => item.name === name && item.variant === variant);
       if (existing) {
@@ -1333,11 +1343,13 @@
       listContainer.innerHTML = cart.map((item, index) => {
         const itemTotal = item.price * item.quantity;
         subtotal += itemTotal;
+        const safeName = escapeCartText(item.name);
+        const safeVariant = escapeCartText(item.variant);
         return `
           <div class="flex items-center justify-between p-3 bg-surface rounded border border-outline-variant/40">
             <div>
-              <h4 class="font-medium text-primary text-sm">${item.name}</h4>
-              <p class="text-xs text-outline">${item.variant}</p>
+              <h4 class="font-medium text-primary text-sm">${safeName}</h4>
+              <p class="text-xs text-outline">${safeVariant}</p>
               <span class="font-serif font-semibold text-primary text-sm">₹${item.price} each</span>
             </div>
             <div class="flex items-center gap-2">
