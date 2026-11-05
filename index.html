@@ -997,6 +997,23 @@
 </div>
 </div>
 </div>
+<dialog aria-label="Product photo viewer" class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-primary/90 p-0 text-white backdrop:bg-primary/90" id="image-zoom-dialog">
+<div class="flex h-full flex-col items-center justify-center gap-4 p-4">
+<div class="flex w-full max-w-5xl items-center justify-end gap-3">
+<button aria-label="Zoom photo" class="flex min-h-11 items-center gap-2 rounded-full bg-white/15 px-4 text-sm hover:bg-white/25 focus-visible:outline-white" id="image-zoom-toggle" type="button">
+<span class="material-symbols-outlined" data-icon="zoom_in">zoom_in</span>
+<span id="image-zoom-toggle-label">Zoom in</span>
+</button>
+<button aria-label="Close photo viewer" class="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 focus-visible:outline-white" id="image-zoom-close" type="button">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="max-h-full w-full max-w-5xl flex-1 overflow-auto overscroll-contain rounded-lg text-center" id="image-zoom-viewport">
+<img alt="" class="mx-auto max-h-[78vh] max-w-full rounded-lg object-contain" id="image-zoom-photo"/>
+</div>
+<p aria-live="polite" class="min-h-6 max-w-5xl text-center text-sm text-white/90" id="image-zoom-caption"></p>
+</div>
+</dialog>
 <!-- TOAST NOTIFICATION -->
 <div class="fixed bottom-6 right-6 z-50 bg-primary text-surface px-5 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3" id="toast-notification">
 <span class="material-symbols-outlined text-secondary-container" data-icon="check_circle">check_circle</span>
@@ -1394,8 +1411,49 @@
       }, 3200);
     }
 
+    let imageZoomTrigger = null;
+
+    function openImageZoom(image) {
+      const dialog = document.getElementById('image-zoom-dialog');
+      const zoomPhoto = document.getElementById('image-zoom-photo');
+      const zoomViewport = document.getElementById('image-zoom-viewport');
+      const zoomToggle = document.getElementById('image-zoom-toggle');
+      imageZoomTrigger = image;
+      image.focus({ preventScroll: true });
+      zoomPhoto.src = image.currentSrc || image.src;
+      zoomPhoto.alt = image.alt;
+      document.getElementById('image-zoom-caption').textContent = image.alt;
+      zoomPhoto.style.width = '';
+      zoomPhoto.style.maxWidth = '';
+      zoomPhoto.style.maxHeight = '';
+      zoomViewport.scrollTop = 0;
+      zoomViewport.scrollLeft = 0;
+      zoomToggle.setAttribute('aria-pressed', 'false');
+      document.getElementById('image-zoom-toggle-label').textContent = 'Zoom in';
+      zoomToggle.querySelector('.material-symbols-outlined').textContent = 'zoom_in';
+      dialog.showModal();
+    }
+
+    function toggleImageZoom() {
+      const photo = document.getElementById('image-zoom-photo');
+      const toggle = document.getElementById('image-zoom-toggle');
+      const isZoomed = toggle.getAttribute('aria-pressed') === 'true';
+      toggle.setAttribute('aria-pressed', String(!isZoomed));
+      document.getElementById('image-zoom-toggle-label').textContent = isZoomed ? 'Zoom in' : 'Zoom out';
+      toggle.querySelector('.material-symbols-outlined').textContent = isZoomed ? 'zoom_in' : 'zoom_out';
+      photo.style.width = isZoomed ? '' : '180vw';
+      photo.style.maxWidth = isZoomed ? '' : 'none';
+      photo.style.maxHeight = isZoomed ? '' : 'none';
+    }
+
     document.addEventListener('keydown', event => {
       if (event.key !== 'Escape') return;
+
+      const imageZoomDialog = document.getElementById('image-zoom-dialog');
+      if (imageZoomDialog.open) {
+        imageZoomDialog.close();
+        return;
+      }
 
       const searchModal = document.getElementById('search-modal');
       if (!searchModal.classList.contains('hidden')) {
@@ -1411,6 +1469,31 @@
 
     // Initialize custom bouquet summary on load
     document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('img:not([src*="brand-wordmark"]):not(#image-zoom-photo)').forEach(image => {
+        image.setAttribute('role', 'button');
+        image.setAttribute('tabindex', '0');
+        image.setAttribute('aria-haspopup', 'dialog');
+        image.setAttribute('aria-label', `View larger image: ${image.alt}`);
+        image.classList.add('cursor-zoom-in');
+        image.addEventListener('click', () => openImageZoom(image));
+        image.addEventListener('keydown', event => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          openImageZoom(image);
+        });
+      });
+
+      const zoomDialog = document.getElementById('image-zoom-dialog');
+      document.getElementById('image-zoom-close').addEventListener('click', () => zoomDialog.close());
+      document.getElementById('image-zoom-toggle').addEventListener('click', toggleImageZoom);
+      zoomDialog.addEventListener('close', () => {
+        if (imageZoomTrigger?.isConnected) imageZoomTrigger.focus({ preventScroll: true });
+        imageZoomTrigger = null;
+      });
+      zoomDialog.addEventListener('click', event => {
+        if (event.target === zoomDialog) zoomDialog.close();
+      });
+
       updateLiveSummary();
     });
   </script>
