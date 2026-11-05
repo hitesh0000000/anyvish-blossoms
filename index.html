@@ -1249,6 +1249,44 @@
     }
 
     // Shopping Cart Operations
+    const CART_STORAGE_KEY = 'anyvish-blossoms-cart-v1';
+
+    function restoreCart() {
+      try {
+        const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+        if (savedCart === null) return { cart: [], error: null };
+
+        const parsedCart = JSON.parse(savedCart);
+        const isValidCart = Array.isArray(parsedCart) && parsedCart.every(item =>
+          item &&
+          typeof item.name === 'string' && item.name.length > 0 &&
+          Number.isSafeInteger(item.price) && item.price > 0 &&
+          typeof item.variant === 'string' &&
+          Number.isSafeInteger(item.quantity) && item.quantity > 0
+        );
+
+        if (!isValidCart) {
+          return { cart: [], error: 'Your saved bag could not be read, so it was not restored.' };
+        }
+
+        return { cart: parsedCart, error: null };
+      } catch (error) {
+        console.error('Unable to restore the saved shopping bag.', error);
+        return { cart: [], error: 'Your saved bag could not be read, so it was not restored.' };
+      }
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+        return true;
+      } catch (error) {
+        console.error('Unable to save the shopping bag on this device.', error);
+        showToast("Couldn't save your bag on this device. It will stay until you leave this page.");
+        return false;
+      }
+    }
+
     function addToCart(name, price, variant) {
       const existing = cart.find(item => item.name === name && item.variant === variant);
       if (existing) {
@@ -1256,6 +1294,7 @@
       } else {
         cart.push({ name, price, variant, quantity: 1 });
       }
+      saveCart();
       renderCart();
       showToast(`Added "${name}" to your Keepsake Bag`);
     }
@@ -1266,6 +1305,7 @@
       if (cart[index].quantity <= 0) {
         cart.splice(index, 1);
       }
+      saveCart();
       renderCart();
     }
 
@@ -1494,6 +1534,12 @@
         if (event.target === zoomDialog) zoomDialog.close();
       });
 
+      const savedCart = restoreCart();
+      cart = savedCart.cart;
+      if (savedCart.error) {
+        showToast(savedCart.error);
+      }
+      renderCart();
       updateLiveSummary();
     });
   </script>
